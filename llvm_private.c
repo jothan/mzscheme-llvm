@@ -174,6 +174,7 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
     Scheme_Object *ret;
     Scheme_Object *path;
     Scheme_Object *tag;
+    Scheme_Object *scm_error;
     LLVMMemoryBufferRef buf;
     LLVMModuleRef mod;
     char *error;
@@ -185,16 +186,25 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
     // FIXME: we need to consult the current scheme security guard.
     fail = LLVMCreateMemoryBufferWithContentsOfFile(SCHEME_PATH_VAL(path), &buf, &error);
     if(fail) {
-	// FIXME: we may need to call LLVMDisposeMessage here.
-	scheme_signal_error("Could not load LLVM module \"%Q\": %s.\n", argv[0], error);
+	scm_error = scheme_make_utf8_string(error);
+	LLVMDisposeMessage(error);
+
+	scheme_signal_error("Could not load LLVM module \"%Q\": %Q.\n", argv[0], scm_error);
     }
     assert(buf);
 
     fail = LLVMParseBitcode(buf, &mod, &error);
     LLVMDisposeMemoryBuffer(buf);
     if(fail) {
-	// FIXME: we may need to call LLVMDisposeMessage here.
-	scheme_signal_error("Could not read LLVM module \"%Q\": %s.\n", argv[0], error);
+	/* Error message is optional */
+	if(error) {
+	    scm_error = scheme_make_utf8_string(error);
+	    LLVMDisposeMessage(error);
+	} else {
+	    scm_error = scheme_make_utf8_string("unknown error");
+	}
+
+	scheme_signal_error("Could not parse LLVM module \"%Q\": %Q.\n", argv[0], scm_error);
     }
     assert(mod);
     fprintf(stderr, "New module <%p> !\n", mod);
