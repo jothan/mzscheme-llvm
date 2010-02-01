@@ -1,0 +1,14 @@
+#!/bin/sh -x
+
+#export LDFLAGS="`llvm-config --ldflags` -lstdc++"
+export CFLAGS=`llvm-config --cflags`
+#export CPPFLAGS=`llvm-config --cppflags`
+
+
+#llvm-config --libnames | while read '; do
+#    LIBS="$LIBS ++ldl $REPLY"
+#done
+
+mzc --3m --xform llvm_private.c && \
+mzc -v --3m --cc llvm_private.3m.c  && \
+mzc --3m --ld llvm_private.so llvm_private_3m.o -- `llvm-config --ldflags` -lstdc++ `llvm-config --libfiles all`
