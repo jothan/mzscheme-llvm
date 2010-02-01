@@ -23,6 +23,7 @@
 #define __STDC_CONSTANT_MACROS
 
 #include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 
 #include <llvm-c/Core.h>
@@ -38,7 +39,7 @@ typedef struct {
 /*
   General utility functions
 */
-static inline Scheme_Object* make_cptr(void *cptr, const char *ctag)
+static inline Scheme_Object* cptr_make(void *cptr, const char *ctag)
 {
     Scheme_Object* tag;
     Scheme_Object* ret;
@@ -48,6 +49,16 @@ static inline Scheme_Object* make_cptr(void *cptr, const char *ctag)
 
     return ret;
 }
+
+static inline bool cptr_check(Scheme_Object *cptr, const char *tag1)
+{
+    if(SCHEME_CPTRP(cptr) && SCHEME_SYMBOLP(SCHEME_CPTR_TYPE(cptr))) {
+	return strcmp(tag1, SCHEME_SYM_VAL(SCHEME_CPTR_TYPE(cptr))) == 0;
+    } else {
+	return false;
+    }
+}
+
 
 /*
   Type operations
@@ -60,7 +71,7 @@ static Scheme_Object* type_int(int argc, Scheme_Object **argv)
 {
     assert(SCHEME_INTP(argv[0]));
 
-    return make_cptr(LLVMIntType(SCHEME_INT_VAL(argv[0])), "llvm-type");
+    return cptr_make(LLVMIntType(SCHEME_INT_VAL(argv[0])), "llvm-type");
 }
 
 /*
@@ -68,27 +79,37 @@ static Scheme_Object* type_int(int argc, Scheme_Object **argv)
 */
 static Scheme_Object* type_int1(int argc, Scheme_Object **argv)
 {
-    return make_cptr(LLVMInt1Type(), "llvm-type");
+    return cptr_make(LLVMInt1Type(), "llvm-type");
 }
 
 static Scheme_Object* type_int8(int argc, Scheme_Object **argv)
 {
-    return make_cptr(LLVMInt8Type(), "llvm-type");
+    return cptr_make(LLVMInt8Type(), "llvm-type");
 }
 
 static Scheme_Object* type_int16(int argc, Scheme_Object **argv)
 {
-    return make_cptr(LLVMInt16Type(), "llvm-type");
+    return cptr_make(LLVMInt16Type(), "llvm-type");
 }
 
 static Scheme_Object* type_int32(int argc, Scheme_Object **argv)
 {
-    return make_cptr(LLVMInt32Type(), "llvm-type");
+    return cptr_make(LLVMInt32Type(), "llvm-type");
 }
 
 static Scheme_Object* type_int64(int argc, Scheme_Object **argv)
 {
-    return make_cptr(LLVMInt64Type(), "llvm-type");
+    return cptr_make(LLVMInt64Type(), "llvm-type");
+}
+
+/* Get the width of an integer type.
+   argv[0]: Integer type
+*/
+static Scheme_Object* type_int_width(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-type"));
+
+    return scheme_make_integer_value(LLVMGetIntTypeWidth(SCHEME_CPTR_VAL(argv[0])));
 }
 
 /*
@@ -101,7 +122,7 @@ static Scheme_Object* type_int64(int argc, Scheme_Object **argv)
 static void module_destroy(void *p, void *data)
 {
     LLVMModuleRef mod;
-    assert(SCHEME_CPTRP(p));
+    assert(cptr_check(p, "llvm-module"));
 
     mod = SCHEME_CPTR_VAL(p);
     assert(mod);
@@ -146,7 +167,7 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
     assert(mod);
     fprintf(stderr, "New module <%p> !\n", mod);
 
-    ret = make_cptr(mod, "llvm-module");
+    ret = cptr_make(mod, "llvm-module");
     scheme_add_finalizer(ret, module_destroy, scheme_void);
 
     return ret;
@@ -168,7 +189,7 @@ static Scheme_Object* module_new(int argc, Scheme_Object **argv)
 
     mod = LLVMModuleCreateWithName(SCHEME_BYTE_STR_VAL(byte_name));
 
-    ret = make_cptr(mod, "llvm-module");
+    ret = cptr_make(mod, "llvm-module");
     scheme_add_finalizer(ret, module_destroy, scheme_void);
 
     return ret;
@@ -181,7 +202,7 @@ static Scheme_Object* module_new(int argc, Scheme_Object **argv)
 static Scheme_Object* module_dump(int argc, Scheme_Object **argv)
 {
     LLVMModuleRef mod;
-    assert(SCHEME_CPTRP(argv[0]));
+    assert(cptr_check(argv[0], "llvm-module"));
     mod = SCHEME_CPTR_VAL(argv[0]);
     assert(mod);
 
@@ -215,12 +236,13 @@ struct module_function {
 
 static const struct module_function functions[] = {
     /* Type operations */
-    {"llvm-type-int",   type_int,   1, 1},
-    {"llvm-type-int1",  type_int1,  0, 0},
-    {"llvm-type-int8",  type_int8,  0, 0},
-    {"llvm-type-int16", type_int16, 0, 0},
-    {"llvm-type-int32", type_int32, 0, 0},
-    {"llvm-type-int64", type_int64, 0, 0},
+    {"llvm-type-int",       type_int,       1, 1},
+    {"llvm-type-int1",      type_int1,      0, 0},
+    {"llvm-type-int8",      type_int8,      0, 0},
+    {"llvm-type-int16",     type_int16,     0, 0},
+    {"llvm-type-int32",     type_int32,     0, 0},
+    {"llvm-type-int64",     type_int64,     0, 0},
+    {"llvm-type-int-width", type_int_width, 1, 1},
     /* Module operations */
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
