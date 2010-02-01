@@ -45,7 +45,7 @@ static inline Scheme_Object* cptr_make(void *cptr, const char *ctag)
     Scheme_Object* ret;
 
     tag = scheme_make_symbol(ctag);
-    ret = scheme_make_cptr(cptr, tag);
+    ret = scheme_make_external_cptr(cptr, tag);
 
     return ret;
 }
