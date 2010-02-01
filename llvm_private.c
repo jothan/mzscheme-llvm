@@ -113,6 +113,35 @@ static Scheme_Object* type_int_width(int argc, Scheme_Object **argv)
 }
 
 /*
+  Get references to floating point types
+*/
+
+static Scheme_Object* type_float(int argc, Scheme_Object **argv)
+{
+    return cptr_make(LLVMFloatType(), "llvm-type");
+}
+
+static Scheme_Object* type_double(int argc, Scheme_Object **argv)
+{
+    return cptr_make(LLVMDoubleType(), "llvm-type");
+}
+
+static Scheme_Object* type_x86fp80(int argc, Scheme_Object **argv)
+{
+    return cptr_make(LLVMX86FP80Type(), "llvm-type");
+}
+
+static Scheme_Object* type_fp128(int argc, Scheme_Object **argv)
+{
+    return cptr_make(LLVMFP128Type(), "llvm-type");
+}
+
+static Scheme_Object* type_ppcfp128(int argc, Scheme_Object **argv)
+{
+    return cptr_make(LLVMPPCFP128Type(), "llvm-type");
+}
+
+/*
   Module operations
 */
 
@@ -243,6 +272,11 @@ static const struct module_function functions[] = {
     {"llvm-type-int32",     type_int32,     0, 0},
     {"llvm-type-int64",     type_int64,     0, 0},
     {"llvm-type-int-width", type_int_width, 1, 1},
+    {"llvm-type-float",     type_float,     0, 0},
+    {"llvm-type-double",    type_double,    0, 0},
+    {"llvm-type-x86fp80",   type_x86fp80,   0, 0},
+    {"llvm-type-fp128",     type_fp128,     0, 0},
+    {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     /* Module operations */
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
