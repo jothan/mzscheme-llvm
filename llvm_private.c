@@ -16,7 +16,7 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* This is broken, we need to define this according to llvm-config. */
+/* FIXME: This is broken, we need to define this according to llvm-config. */
 #define _DEBUG
 #define _GNU_SOURCE
 #define __STDC_LIMIT_MACROS
@@ -64,8 +64,9 @@ static inline bool cptr_check(Scheme_Object *cptr, const char *tag1)
   Type operations
 */
 
-/* Get a reference to an integer type of an arbitrary size.
-   argv[0]: int size in bits
+/*
+  Get a reference to an integer type of an arbitrary size.
+  argv[0]: int size in bits
 */
 static Scheme_Object* type_int(int argc, Scheme_Object **argv)
 {
@@ -77,6 +78,7 @@ static Scheme_Object* type_int(int argc, Scheme_Object **argv)
 /*
   Get references to common integer types.
 */
+
 static Scheme_Object* type_int1(int argc, Scheme_Object **argv)
 {
     return cptr_make(LLVMInt1Type(), "llvm-type");
@@ -102,8 +104,9 @@ static Scheme_Object* type_int64(int argc, Scheme_Object **argv)
     return cptr_make(LLVMInt64Type(), "llvm-type");
 }
 
-/* Get the width of an integer type.
-   argv[0]: Integer type
+/*
+  Get the width of an integer type.
+  argv[0]: Integer type
 */
 static Scheme_Object* type_int_width(int argc, Scheme_Object **argv)
 {
