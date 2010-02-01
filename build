@@ -9,6 +9,7 @@ export CFLAGS=`llvm-config --cflags`
 #    LIBS="$LIBS ++ldl $REPLY"
 #done
 
+# FIXME: I need to find a way to pass the CFLAGS without too much uglyness.
 mzc --3m --xform llvm_private.c && \
 mzc --3m --cc llvm_private.3m.c && \
 mzc --3m --ld llvm_private.so llvm_private_3m.o -- `llvm-config --ldflags` -lstdc++ `llvm-config --libfiles engine backend bitreader bitwriter`
