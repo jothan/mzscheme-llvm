@@ -35,6 +35,42 @@ typedef struct {
     const Scheme_Object *value;
 } global_def;
 
+static const char *license =
+    "MzScheme to LLVM 2.6 wrapper\n"
+    "Copyright (C) 2010  Jonathan Bastien-Filiatrault\n"
+    "\n"
+    "This program is free software: you can redistribute it and/or modify\n"
+    "it under the terms of the GNU General Public License as published by\n"
+    "the Free Software Foundation, either version 3 of the License, or\n"
+    "(at your option) any later version.\n"
+    "\n"
+    "This program is distributed in the hope that it will be useful, but\n"
+    "WITHOUT ANY WARRANTY; without even the implied warranty of\n"
+    "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n"
+    "General Public License for more details.\n"
+    "\n"
+    "You should have received a copy of the GNU General Public License\n"
+    "along with this program.  If not, see <http://www.gnu.org/licenses/>.\n";
+
+static const char *disclaimer =
+    "MzScheme to LLVM 2.6 wrapper\n"
+    "Copyright (C) 2010  Jonathan Bastien-Filiatrault\n"
+    "This program comes with ABSOLUTELY NO WARRANTY;\n"
+    "for details type (display llvm-wrapper-nowarranty)\n"
+    "This is free software, and you are welcome to redistribute it\n"
+    "under certain conditions; type (display llvm-wrapper-license)\n"
+    "for details.\n";
+
+static const char *nowarranty =
+    "THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY\n"
+    "APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT\n"
+    "HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM \"AS IS\" WITHOUT WARRANTY\n"
+    "OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,\n"
+    "THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR\n"
+    "PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM\n"
+    "IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF\n"
+    "ALL NECESSARY SERVICING, REPAIR OR CORRECTION.\n";
+
 
 /*
   General utility functions
@@ -311,6 +347,13 @@ Scheme_Object* scheme_initialize(Scheme_Env* env)
     for(f = functions; f->name != NULL; f = f XFORM_TRUST_PLUS 1) {
 	register_function(module, f->name, f->code, f->arg_min, f->arg_max);
     }
+
+    tmp = scheme_make_utf8_string(license);
+    scheme_add_global("llvm-wrapper-license", tmp, module);
+    tmp = scheme_make_utf8_string(disclaimer);
+    scheme_add_global("llvm-wrapper-disclaimer", tmp, module);
+    tmp = scheme_make_utf8_string(nowarranty);
+    scheme_add_global("llvm-wrapper-nowarranty", tmp, module);
 
     scheme_finish_primitive_module(module);
 
