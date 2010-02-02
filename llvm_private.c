@@ -436,8 +436,8 @@ static const struct module_function functions[] = {
     /* Value operations */
     {"llvm-value-dump", value_dump, 1, 1},
     /* Function operations */
-    {"llvm-function-add",    function_add,    3, 3},
-    {"llvm-function-delete", function_delete, 1, 1},
+    {"llvm-function-add!",    function_add,    3, 3},
+    {"llvm-function-delete!", function_delete, 1, 1},
     /* Module operations */
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
