@@ -258,8 +258,12 @@ static Scheme_Object* function_add(int argc, Scheme_Object **argv)
 static Scheme_Object* function_delete(int argc, Scheme_Object **argv)
 {
     assert(cptr_check(argv[0], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[0]));
 
     LLVMDeleteFunction(SCHEME_CPTR_VAL(argv[0]));
+
+    /* This operation invalidates the pointer. */
+    SCHEME_CPTR_VAL(argv[0]) = NULL;
 
     return scheme_void;
 }
