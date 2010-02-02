@@ -252,6 +252,19 @@ static Scheme_Object* function_add(int argc, Scheme_Object **argv)
 }
 
 /*
+  Delete a function from a module.
+  argv[0]: Function value
+*/
+static Scheme_Object* function_delete(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-value"));
+
+    LLVMDeleteFunction(SCHEME_CPTR_VAL(argv[0]));
+
+    return scheme_void;
+}
+
+/*
   Module operations
 */
 
@@ -399,7 +412,8 @@ static const struct module_function functions[] = {
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-function",  type_function,  2, 3},
     /* Function operations */
-    {"llvm-function-add", function_add, 3, 3},
+    {"llvm-function-add",    function_add,    3, 3},
+    {"llvm-function-delete", function_delete, 1, 1},
     /* Module operations */
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
