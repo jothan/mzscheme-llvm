@@ -357,7 +357,7 @@ Scheme_Object* scheme_initialize(Scheme_Env* env)
 
     scheme_finish_primitive_module(module);
 
-    return scheme_make_utf8_string("LLVM is go");
+    return scheme_void;
 }
 
 Scheme_Object* scheme_reload(Scheme_Env* env)
