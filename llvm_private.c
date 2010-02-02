@@ -228,6 +228,30 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
 }
 
 /*
+  Function operations
+*/
+
+/*
+  Add a function to a module.
+  argv[0]: Destination module
+  argv[1]: Function name
+  argv[2]: Function type
+*/
+static Scheme_Object* function_add(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *func_name;
+    assert(cptr_check(argv[0], "llvm-module"));
+    assert(SCHEME_CHAR_STRINGP(argv[1]));
+    assert(cptr_check(argv[2], "llvm-type"));
+
+    func_name = scheme_char_string_to_byte_string(argv[1]);
+
+    return cptr_make(LLVMAddFunction(SCHEME_CPTR_VAL(argv[0]),
+				     SCHEME_BYTE_STR_VAL(func_name),
+				     SCHEME_CPTR_VAL(argv[2])), "llvm-value");
+}
+
+/*
   Module operations
 */
 
@@ -374,6 +398,8 @@ static const struct module_function functions[] = {
     {"llvm-type-fp128",     type_fp128,     0, 0},
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-function",  type_function,  2, 3},
+    /* Function operations */
+    {"llvm-function-add", function_add, 3, 3},
     /* Module operations */
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
