@@ -30,11 +30,6 @@
 
 #include "escheme.h"
 
-typedef struct {
-    const char *name;
-    const Scheme_Object *value;
-} global_def;
-
 static const char *license =
     "MzScheme to LLVM 2.6 wrapper\n"
     "Copyright (C) 2010  Jonathan Bastien-Filiatrault\n"
