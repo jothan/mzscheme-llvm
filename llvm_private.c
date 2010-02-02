@@ -228,6 +228,24 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
 }
 
 /*
+  Value operations
+*/
+
+/*
+  Dump a value to stderr.
+  argv[0]: Value to dump
+*/
+static Scheme_Object* value_dump(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[0]));
+
+    LLVMDumpValue(SCHEME_CPTR_VAL(argv[0]));
+
+    return scheme_void;
+}
+
+/*
   Function operations
 */
 
@@ -415,6 +433,8 @@ static const struct module_function functions[] = {
     {"llvm-type-fp128",     type_fp128,     0, 0},
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-function",  type_function,  2, 3},
+    /* Value operations */
+    {"llvm-value-dump", value_dump, 1, 1},
     /* Function operations */
     {"llvm-function-add",    function_add,    3, 3},
     {"llvm-function-delete", function_delete, 1, 1},
