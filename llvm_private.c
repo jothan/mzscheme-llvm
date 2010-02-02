@@ -181,6 +181,53 @@ static Scheme_Object* type_ppcfp128(int argc, Scheme_Object **argv)
 }
 
 /*
+  Operations on function types
+*/
+
+/*
+  Get a reference to a function type
+  argv[0]: Return type
+  argv[1]: List of parameter types
+  argv[2]: Boolean to indicate if the function is vararg (optional)
+*/
+static Scheme_Object* type_function(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *vararg=scheme_false;
+    int list_len;
+    int i;
+    LLVMTypeRef *param_types;
+    LLVMTypeRef ret;
+    Scheme_Object *param;
+    Scheme_Object *val;
+    if(argc == 3) {
+	vararg = argv[2];
+    }
+    assert(cptr_check(argv[0], "llvm-type"));
+    assert(SCHEME_NULLP(argv[1]) || SCHEME_PAIRP(argv[1]));
+    assert(SCHEME_BOOLP(vararg));
+
+    list_len = scheme_proper_list_length(argv[1]);
+    assert(list_len >= 0);
+    param_types = alloca(list_len * sizeof(LLVMTypeRef));
+
+    param  = argv[1];
+    for(i=0; i < list_len; i++) {
+	assert(SCHEME_PAIRP(param));
+	val = SCHEME_CAR(param);
+	assert(cptr_check(val, "llvm-type"));
+
+	param_types[i] = SCHEME_CPTR_VAL(val);
+
+	param = SCHEME_CDR(param);
+    }
+
+    ret = LLVMFunctionType(SCHEME_CPTR_VAL(argv[0]),
+			   param_types, list_len,
+			   SCHEME_TRUEP(vararg));
+    return cptr_make(ret, "llvm-type");
+}
+
+/*
   Module operations
 */
 
@@ -326,6 +373,7 @@ static const struct module_function functions[] = {
     {"llvm-type-x86fp80",   type_x86fp80,   0, 0},
     {"llvm-type-fp128",     type_fp128,     0, 0},
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
+    {"llvm-type-function",  type_function,  2, 3},
     /* Module operations */
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
