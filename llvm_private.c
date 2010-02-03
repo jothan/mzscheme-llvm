@@ -279,7 +279,6 @@ static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
     assert(cptr_check(argv[0], "llvm-value")); \
     assert(SCHEME_CPTR_VAL(argv[0])); \
     assert(cptr_check(argv[1], "llvm-type")); \
-    assert(SCHEME_CPTR_VAL(argv[1])); \
 \
     return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
 			      SCHEME_CPTR_VAL(argv[1])), "llvm-value"); \
