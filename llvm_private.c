@@ -226,6 +226,39 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
   Value operations
 */
 
+#define VALUE_BIN_OP(NAME, FUNCTION) \
+static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
+{ \
+    assert(cptr_check(argv[0], "llvm-value")); \
+    assert(SCHEME_CPTR_VAL(argv[0])); \
+    assert(cptr_check(argv[1], "llvm-value")); \
+    assert(SCHEME_CPTR_VAL(argv[1])); \
+\
+    return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
+			      SCHEME_CPTR_VAL(argv[1])), "llvm-value"); \
+}
+
+VALUE_BIN_OP(const_add, LLVMConstAdd)
+VALUE_BIN_OP(const_nsw_add, LLVMConstNSWAdd)
+VALUE_BIN_OP(const_fadd, LLVMConstFAdd)
+VALUE_BIN_OP(const_sub, LLVMConstSub)
+VALUE_BIN_OP(const_fsub, LLVMConstFSub)
+VALUE_BIN_OP(const_mul, LLVMConstMul)
+VALUE_BIN_OP(const_fmul, LLVMConstFMul)
+VALUE_BIN_OP(const_udiv, LLVMConstUDiv)
+VALUE_BIN_OP(const_sdiv, LLVMConstSDiv)
+VALUE_BIN_OP(const_exact_sdiv, LLVMConstExactSDiv)
+VALUE_BIN_OP(const_fdiv, LLVMConstFDiv)
+VALUE_BIN_OP(const_urem, LLVMConstURem)
+VALUE_BIN_OP(const_srem, LLVMConstSRem)
+VALUE_BIN_OP(const_frem, LLVMConstFRem)
+VALUE_BIN_OP(const_and, LLVMConstAnd)
+VALUE_BIN_OP(const_or, LLVMConstOr)
+VALUE_BIN_OP(const_xor, LLVMConstXor)
+VALUE_BIN_OP(const_shl, LLVMConstShl)
+VALUE_BIN_OP(const_lshr, LLVMConstLShr)
+VALUE_BIN_OP(const_ashr, LLVMConstAShr)
+
 /*
   Dump a value to stderr.
   argv[0]: Value to dump
@@ -429,7 +462,27 @@ static const struct module_function functions[] = {
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-function",  type_function,  2, 3},
     /* Value operations */
-    {"llvm-value-dump", value_dump, 1, 1},
+    {"llvm-const-add",        const_add,        2, 2},
+    {"llvm-const-nsw-add",    const_nsw_add,    2, 2},
+    {"llvm-const-fadd",       const_fadd,       2, 2},
+    {"llvm-const-sub",        const_sub,        2, 2},
+    {"llvm-const-fsub",       const_fsub,       2, 2},
+    {"llvm-const-mul",        const_mul,        2, 2},
+    {"llvm-const-fmul",       const_fmul,       2, 2},
+    {"llvm-const-udiv",       const_udiv,       2, 2},
+    {"llvm-const-sdiv",       const_sdiv,       2, 2},
+    {"llvm-const-exact-sdiv", const_exact_sdiv, 2, 2},
+    {"llvm-const-fdiv",       const_fdiv,       2, 2},
+    {"llvm-const-urem",       const_urem,       2, 2},
+    {"llvm-const-srem",       const_srem,       2, 2},
+    {"llvm-const-frem",       const_frem,       2, 2},
+    {"llvm-const-add",        const_and,        2, 2},
+    {"llvm-const-or",         const_or,         2, 2},
+    {"llvm-const-xor",        const_xor,        2, 2},
+    {"llvm-const-shl",        const_shl,        2, 2},
+    {"llvm-const-lshr",       const_lshr,       2, 2},
+    {"llvm-const-ashr",       const_ashr,       2, 2},
+    {"llvm-value-dump",       value_dump,       1, 1},
     /* Function operations */
     {"llvm-function-add!",    function_add,    3, 3},
     {"llvm-function-delete!", function_delete, 1, 1},
