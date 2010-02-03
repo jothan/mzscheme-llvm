@@ -226,6 +226,66 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
   Value operations
 */
 
+/* Constant scalar values */
+
+/*
+  Return a null value.
+  argv[0]: Type of value to construct
+*/
+static Scheme_Object* const_null(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-type"));
+
+    return cptr_make(LLVMConstNull(SCHEME_CPTR_VAL(argv[0])), "llvm-value");
+}
+
+/*
+  Return a value filled with binary "1"s.
+  argv[0]: Type of value to construct
+*/
+static Scheme_Object* const_allones(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-type"));
+
+    return cptr_make(LLVMConstAllOnes(SCHEME_CPTR_VAL(argv[0])), "llvm-value");
+}
+
+/*
+  Build an integer value.
+  argv[0]: Type of value to construct
+  argv[1]: Fixnum representation of value
+  argv[2]: A boolean to sign extend or not (optional)
+*/
+static Scheme_Object* const_int(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *sext = scheme_false;
+    assert(cptr_check(argv[0], "llvm-type"));
+    assert(SCHEME_INTP(argv[1]));
+
+    if(argc == 3) {
+	assert(SCHEME_BOOLP(argv[2]));
+	sext = argv[2];
+    }
+
+    return cptr_make(LLVMConstInt(SCHEME_CPTR_VAL(argv[0]),
+				  SCHEME_INT_VAL(argv[1]),
+				  SCHEME_TRUEP(sext)), "llvm-value");
+}
+
+/*
+  Build an floating point value.
+  argv[0]: Type of value to construct
+  argv[1]: double representation of value
+*/
+static Scheme_Object* const_real(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-type"));
+    assert(SCHEME_DBLP(argv[1]));
+
+    return cptr_make(LLVMConstReal(SCHEME_CPTR_VAL(argv[0]),
+				   SCHEME_DBL_VAL(argv[1])), "llvm-value");
+}
+
 /* Constant binary operations */
 
 /*
@@ -506,6 +566,10 @@ static const struct module_function functions[] = {
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-function",  type_function,  2, 3},
     /* Value operations */
+    {"llvm-const-null",        const_null,        1, 1}, /* Constant scalar values */
+    {"llvm-const-allones",     const_allones,     1, 1},
+    {"llvm-const-int",         const_int,         2, 3},
+    {"llvm-const-real",        const_real,        2, 2},
     {"llvm-const-add",         const_add,         2, 2}, /* Constant binary operations */
     {"llvm-const-nsw-add",     const_nsw_add,     2, 2},
     {"llvm-const-fadd",        const_fadd,        2, 2},
