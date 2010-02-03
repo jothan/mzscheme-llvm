@@ -226,6 +226,13 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
   Value operations
 */
 
+/* Constant binary operations */
+
+/*
+  Combine two constant operands.
+  argv[0]: Value of operand 1
+  argv[1]: Value of operand 2
+*/
 #define VALUE_BIN_OP(NAME, FUNCTION) \
 static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
 { \
@@ -258,6 +265,44 @@ VALUE_BIN_OP(const_xor, LLVMConstXor)
 VALUE_BIN_OP(const_shl, LLVMConstShl)
 VALUE_BIN_OP(const_lshr, LLVMConstLShr)
 VALUE_BIN_OP(const_ashr, LLVMConstAShr)
+
+/* Constant conversion operations */
+
+/*
+  Convert a value to the specified type.
+  argv[0]: Value to be converted
+  argv[1]: Destination type
+*/
+#define VALUE_CONV_BIN_OP(NAME, FUNCTION) \
+static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
+{ \
+    assert(cptr_check(argv[0], "llvm-value")); \
+    assert(SCHEME_CPTR_VAL(argv[0])); \
+    assert(cptr_check(argv[1], "llvm-type")); \
+    assert(SCHEME_CPTR_VAL(argv[1])); \
+\
+    return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
+			      SCHEME_CPTR_VAL(argv[1])), "llvm-value"); \
+}
+
+VALUE_CONV_BIN_OP(const_trunc, LLVMConstTrunc)
+VALUE_CONV_BIN_OP(const_sext, LLVMConstSExt)
+VALUE_CONV_BIN_OP(const_zext, LLVMConstZExt)
+VALUE_CONV_BIN_OP(const_fptrunc, LLVMConstFPTrunc)
+VALUE_CONV_BIN_OP(const_fpext, LLVMConstFPExt)
+VALUE_CONV_BIN_OP(const_uitofp, LLVMConstUIToFP)
+VALUE_CONV_BIN_OP(const_sitofp, LLVMConstSIToFP)
+VALUE_CONV_BIN_OP(const_fptoui, LLVMConstFPToUI)
+VALUE_CONV_BIN_OP(const_fptosi, LLVMConstFPToSI)
+VALUE_CONV_BIN_OP(const_ptrtoint, LLVMConstPtrToInt)
+VALUE_CONV_BIN_OP(const_inttoptr, LLVMConstIntToPtr)
+VALUE_CONV_BIN_OP(const_bitcast, LLVMConstBitCast)
+VALUE_CONV_BIN_OP(const_zext_or_bitcast, LLVMConstZExtOrBitCast)
+VALUE_CONV_BIN_OP(const_sext_or_bitcast, LLVMConstSExtOrBitCast)
+VALUE_CONV_BIN_OP(const_trunc_or_bitcast, LLVMConstTruncOrBitCast)
+VALUE_CONV_BIN_OP(const_pointercast, LLVMConstPointerCast)
+VALUE_CONV_BIN_OP(const_fpcast, LLVMConstFPCast)
+
 
 /*
   Dump a value to stderr.
@@ -462,26 +507,43 @@ static const struct module_function functions[] = {
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-function",  type_function,  2, 3},
     /* Value operations */
-    {"llvm-const-add",        const_add,        2, 2},
-    {"llvm-const-nsw-add",    const_nsw_add,    2, 2},
-    {"llvm-const-fadd",       const_fadd,       2, 2},
-    {"llvm-const-sub",        const_sub,        2, 2},
-    {"llvm-const-fsub",       const_fsub,       2, 2},
-    {"llvm-const-mul",        const_mul,        2, 2},
-    {"llvm-const-fmul",       const_fmul,       2, 2},
-    {"llvm-const-udiv",       const_udiv,       2, 2},
-    {"llvm-const-sdiv",       const_sdiv,       2, 2},
-    {"llvm-const-exact-sdiv", const_exact_sdiv, 2, 2},
-    {"llvm-const-fdiv",       const_fdiv,       2, 2},
-    {"llvm-const-urem",       const_urem,       2, 2},
-    {"llvm-const-srem",       const_srem,       2, 2},
-    {"llvm-const-frem",       const_frem,       2, 2},
-    {"llvm-const-add",        const_and,        2, 2},
-    {"llvm-const-or",         const_or,         2, 2},
-    {"llvm-const-xor",        const_xor,        2, 2},
-    {"llvm-const-shl",        const_shl,        2, 2},
-    {"llvm-const-lshr",       const_lshr,       2, 2},
-    {"llvm-const-ashr",       const_ashr,       2, 2},
+    {"llvm-const-add",         const_add,         2, 2}, /* Constant binary operations */
+    {"llvm-const-nsw-add",     const_nsw_add,     2, 2},
+    {"llvm-const-fadd",        const_fadd,        2, 2},
+    {"llvm-const-sub",         const_sub,         2, 2},
+    {"llvm-const-fsub",        const_fsub,        2, 2},
+    {"llvm-const-mul",         const_mul,         2, 2},
+    {"llvm-const-fmul",        const_fmul,        2, 2},
+    {"llvm-const-udiv",        const_udiv,        2, 2},
+    {"llvm-const-sdiv",        const_sdiv,        2, 2},
+    {"llvm-const-exact-sdiv",  const_exact_sdiv,  2, 2},
+    {"llvm-const-fdiv",        const_fdiv,        2, 2},
+    {"llvm-const-urem",        const_urem,        2, 2},
+    {"llvm-const-srem",        const_srem,        2, 2},
+    {"llvm-const-frem",        const_frem,        2, 2},
+    {"llvm-const-add",         const_and,         2, 2},
+    {"llvm-const-or",          const_or,          2, 2},
+    {"llvm-const-xor",         const_xor,         2, 2},
+    {"llvm-const-shl",         const_shl,         2, 2},
+    {"llvm-const-lshr",        const_lshr,        2, 2},
+    {"llvm-const-ashr",        const_ashr,        2, 2},
+    {"llvm-const-trunc",       const_trunc,       2, 2}, /* Constant conversion operations */
+    {"llvm-const-sext",        const_sext,        2, 2},
+    {"llvm-const-zext",        const_zext,        2, 2},
+    {"llvm-const-fptrunc",     const_fptrunc,     2, 2},
+    {"llvm-const-fpext",       const_fpext,       2, 2},
+    {"llvm-const-uitofp",      const_uitofp,      2, 2},
+    {"llvm-const-sitofp",      const_sitofp,      2, 2},
+    {"llvm-const-fptoui",      const_fptoui,      2, 2},
+    {"llvm-const-fptosi",      const_fptosi,      2, 2},
+    {"llvm-const-ptrtoint",    const_ptrtoint,    2, 2},
+    {"llvm-const-inttoptr",    const_inttoptr,    2, 2},
+    {"llvm-const-bitcast",     const_bitcast,     2, 2},
+    {"llvm-const-pointercast", const_pointercast, 2, 2},
+    {"llvm-const-fpcast",      const_fpcast,      2, 2},
+    {"llvm-const-zext-or-bitcast",  const_zext_or_bitcast,  2, 2},
+    {"llvm-const-sext-or-bitcast",  const_sext_or_bitcast,  2, 2},
+    {"llvm-const-trunc-or-bitcast", const_trunc_or_bitcast, 2, 2},
     {"llvm-value-dump",       value_dump,       1, 1},
     /* Function operations */
     {"llvm-function-add!",    function_add,    3, 3},
