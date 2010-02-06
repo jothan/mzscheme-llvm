@@ -176,6 +176,17 @@ static Scheme_Object* type_ppcfp128(int argc, Scheme_Object **argv)
 }
 
 /*
+  Return a pointer type
+  argv[0]: Type that is pointed to
+*/
+static Scheme_Object* type_pointer(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-type"));
+
+    return cptr_make(LLVMPointerType(SCHEME_CPTR_VAL(argv[0]), 0), "llvm-type");
+}
+
+/*
   Operations on function types
 */
 
@@ -564,6 +575,7 @@ static const struct module_function functions[] = {
     {"llvm-type-x86fp80",   type_x86fp80,   0, 0},
     {"llvm-type-fp128",     type_fp128,     0, 0},
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
+    {"llvm-type-pointer",   type_pointer,   1, 1},
     {"llvm-type-function",  type_function,  2, 3},
     /* Value operations */
     {"llvm-const-null",        const_null,        1, 1}, /* Constant scalar values */
