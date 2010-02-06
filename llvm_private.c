@@ -90,6 +90,15 @@ static inline bool cptr_check(Scheme_Object *cptr, const char *tag1)
     }
 }
 
+/* R6RS pairs are mutable, so get a real immutable pair. */
+static inline Scheme_Object* get_a_pair(Scheme_Object *obj)
+{
+    if(SCHEME_MPAIRP(obj)) {
+	return scheme_make_pair(SCHEME_MCAR(obj), SCHEME_MCDR(obj));
+    } else {
+	return obj;
+    }
+}
 
 /*
   Type operations
