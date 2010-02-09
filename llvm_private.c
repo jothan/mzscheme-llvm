@@ -247,22 +247,20 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
     int i;
     LLVMTypeRef *param_types;
     LLVMTypeRef ret;
-    Scheme_Object *params;
     Scheme_Object *param;
     Scheme_Object *val;
     if(argc == 3) {
 	vararg = argv[2];
     }
     assert(cptr_check(argv[0], "llvm-type"));
-    params = get_a_pair(argv[1]);
-    assert(SCHEME_NULLP(params) || SCHEME_PAIRP(params));
+    assert(SCHEME_NULLP(argv[1]) || SCHEME_PAIRP(argv[1]));
     assert(SCHEME_BOOLP(vararg));
 
-    list_len = scheme_proper_list_length(params);
+    list_len = scheme_proper_list_length(argv[1]);
     assert(list_len >= 0);
     param_types = alloca(list_len * sizeof(LLVMTypeRef));
 
-    param  = params;
+    param  = argv[1];
     for(i=0; i < list_len; i++) {
 	assert(SCHEME_PAIRP(param));
 	val = SCHEME_CAR(param);
@@ -270,7 +268,7 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
 
 	param_types[i] = SCHEME_CPTR_VAL(val);
 
-	param = get_a_pair(SCHEME_CDR(param));
+	param = SCHEME_CDR(param);
     }
 
     ret = LLVMFunctionType(SCHEME_CPTR_VAL(argv[0]),
