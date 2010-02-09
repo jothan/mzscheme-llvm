@@ -270,22 +270,22 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
 	vararg = argv[2];
     }
     assert(cptr_check(argv[0], "llvm-type"));
-    assert(SCHEME_NULLP(argv[1]) || SCHEME_PAIRP(argv[1]));
+    assert(SCHEME_NULLP(argv[1]) || PAIRP(argv[1]));
     assert(SCHEME_BOOLP(vararg));
 
-    list_len = scheme_proper_list_length(argv[1]);
+    list_len = list_length(argv[1]);
     assert(list_len >= 0);
     param_types = alloca(list_len * sizeof(LLVMTypeRef));
 
     param  = argv[1];
     for(i=0; i < list_len; i++) {
-	assert(SCHEME_PAIRP(param));
-	val = SCHEME_CAR(param);
+	assert(PAIRP(param));
+	val = PAIR_CAR(param);
 	assert(cptr_check(val, "llvm-type"));
 
 	param_types[i] = SCHEME_CPTR_VAL(val);
 
-	param = SCHEME_CDR(param);
+	param = PAIR_CDR(param);
     }
 
     ret = LLVMFunctionType(SCHEME_CPTR_VAL(argv[0]),
