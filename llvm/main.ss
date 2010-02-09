@@ -21,6 +21,16 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.\n")
 
+; Syntax
+;(function "<name>" <return type> <argument list>
+; <function body>)
+
+; argument list: list of argument types. Can be empty. End with symbol
+; "..." to indicate that the function is variadic.
+
+; function body: Body of the function. Syntax TBD. Leave empty for a
+; function protoype declaration.
+
   (define (assemble-function mod exp)
     (let* ((name (cadr exp))
 	   (ret (caddr exp))
