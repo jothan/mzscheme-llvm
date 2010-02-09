@@ -101,6 +101,41 @@ static inline Scheme_Object* get_a_pair(Scheme_Object *obj)
 }
 
 /*
+  Mutation-agnostic pair accessors.
+*/
+
+/* The CAR and CDR functions return a const pointer to avoid the use
+   of the returned value as an l-value. */
+static inline const Scheme_Object* PAIR_CAR(const Scheme_Object *obj)
+{
+    if(SCHEME_PAIRP(obj)) {
+	return SCHEME_CAR(obj);
+    } else if(SCHEME_MPAIRP(obj)) {
+	return SCHEME_MCAR(obj);
+    } else {
+	abort();
+	return NULL;
+    }
+}
+
+static inline const Scheme_Object* PAIR_CDR(const Scheme_Object *obj)
+{
+    if(SCHEME_PAIRP(obj)) {
+	return SCHEME_CDR(obj);
+    } else if(SCHEME_MPAIRP(obj)) {
+	return SCHEME_MCDR(obj);
+    } else {
+	abort();
+	return NULL;
+    }
+}
+
+static inline bool PAIRP(const Scheme_Object *obj)
+{
+    return SCHEME_PAIRP(obj) || SCHEME_MPAIRP(obj);
+}
+
+/*
   Type operations
 */
 
