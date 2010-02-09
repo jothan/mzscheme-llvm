@@ -135,6 +135,23 @@ static inline bool PAIRP(const Scheme_Object *obj)
     return SCHEME_PAIRP(obj) || SCHEME_MPAIRP(obj);
 }
 
+static int list_length(const Scheme_Object *obj)
+{
+    const Scheme_Object *p = obj;
+    int len = 0;
+
+    while(true) {
+	if(PAIRP(p)) {
+	    len += 1;
+	    p = PAIR_CDR(p);
+	} else if(SCHEME_NULLP(p)) {
+	    return len;
+	} else {
+	    return -1;
+	}
+    }
+}
+
 /*
   Type operations
 */
