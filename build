@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh
 
 EXTRA_FLAGS="-Wall -pedantic -std=gnu99"
 export CFLAGS="`llvm-config --cflags` $EXTRA_FLAGS"
