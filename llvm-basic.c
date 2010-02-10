@@ -124,13 +124,12 @@ static inline bool PAIRP(const Scheme_Object *obj)
 
 static int list_length(const Scheme_Object *obj)
 {
-    const Scheme_Object *p = obj;
-    int len = 0;
+    const Scheme_Object *p;
+    int len;
 
-    while(true) {
+    for(p=obj, len=0; ; p = PAIR_CDR(p)) {
 	if(PAIRP(p)) {
 	    len += 1;
-	    p = PAIR_CDR(p);
 	} else if(SCHEME_NULLP(p)) {
 	    return len;
 	} else {
