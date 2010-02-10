@@ -16,17 +16,12 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* FIXME: This is broken, we need to define this according to llvm-config. */
-#define _DEBUG
-#define _GNU_SOURCE
-#define __STDC_LIMIT_MACROS
-#define __STDC_CONSTANT_MACROS
+#include <llvm-c/Core.h>
 
 #include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 
-#include <llvm-c/Core.h>
 
 #include "escheme.h"
 
