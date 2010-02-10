@@ -17,6 +17,7 @@
 */
 
 #include <llvm-c/Core.h>
+#include <llvm-c/BitReader.h>
 
 #include <assert.h>
 #include <stdbool.h>
@@ -76,7 +77,7 @@ static inline Scheme_Object* cptr_make(void *cptr, const char *ctag)
     return ret;
 }
 
-static inline bool cptr_check(Scheme_Object *cptr, const char *tag1)
+static inline bool cptr_check(const Scheme_Object *cptr, const char *tag1)
 {
     if(SCHEME_CPTRP(cptr) && SCHEME_SYMBOLP(SCHEME_CPTR_TYPE(cptr))) {
 	return strcmp(tag1, SCHEME_SYM_VAL(SCHEME_CPTR_TYPE(cptr))) == 0;
@@ -250,8 +251,8 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
     int i;
     LLVMTypeRef *param_types;
     LLVMTypeRef ret;
-    Scheme_Object *param;
-    Scheme_Object *val;
+    const Scheme_Object *param;
+    const Scheme_Object *val;
     if(argc == 3) {
 	vararg = argv[2];
     }
@@ -491,7 +492,7 @@ static void module_destroy(void *p, void *data)
     mod = SCHEME_CPTR_VAL(p);
     assert(mod);
 
-    fprintf(stderr, "Destroying module <%p> !\n", mod);
+    fprintf(stderr, "Destroying module <%p> !\n", (void*)mod);
     fflush(stderr);
 
     LLVMDisposeModule(mod);
@@ -539,7 +540,7 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
 	scheme_signal_error("Could not parse LLVM module \"%Q\": %Q.\n", argv[0], scm_error);
     }
     assert(mod);
-    fprintf(stderr, "New module <%p> !\n", mod);
+    fprintf(stderr, "New module <%p> !\n", (void*)mod);
 
     ret = cptr_make(mod, "llvm-module");
     scheme_add_finalizer(ret, module_destroy, scheme_void);
