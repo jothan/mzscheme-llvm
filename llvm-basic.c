@@ -690,7 +690,7 @@ Scheme_Object* scheme_initialize(Scheme_Env* env)
     Scheme_Object *tmp=NULL;
     const struct module_function *f;
 
-    name = scheme_intern_symbol("llvm_private");
+    name = scheme_intern_symbol("llvm-basic");
     module = scheme_primitive_module(name, env);
 
     for(f = functions; f->name != NULL; f = f XFORM_TRUST_PLUS 1) {
@@ -716,5 +716,5 @@ Scheme_Object* scheme_reload(Scheme_Env* env)
 
 Scheme_Object* scheme_module_name(void)
 {
-    return scheme_intern_symbol("llvm_private");
+    return scheme_intern_symbol("llvm-basic");
 }
