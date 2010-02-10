@@ -1,10 +1,10 @@
 #!/bin/sh -x
 
-#export LDFLAGS="`llvm-config --ldflags` -lstdc++"
-export CFLAGS=`llvm-config --cflags`
+EXTRA_FLAGS="-Wall -pedantic -std=gnu99"
+export CFLAGS="`llvm-config --cflags` $EXTRA_FLAGS"
 
 MZC_CPP=""
-for f in `llvm-config --cppflags`; do
+for f in `llvm-config --cppflags` $EXTRA_FLAGS; do
     MZC_CPP="${MZC_CPP}++cppf $f "
 done
 
