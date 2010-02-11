@@ -560,6 +560,7 @@ static Scheme_Object* module_new(int argc, Scheme_Object **argv)
     byte_name = scheme_char_string_to_byte_string(argv[0]);
 
     mod = LLVMModuleCreateWithName(SCHEME_BYTE_STR_VAL(byte_name));
+    assert(mod);
 
     ret = cptr_make(mod, "llvm-module");
     scheme_add_finalizer(ret, module_destroy, scheme_void);
