@@ -505,7 +505,6 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
 {
     Scheme_Object *ret;
     Scheme_Object *path;
-    Scheme_Object *tag;
     Scheme_Object *scm_error;
     LLVMMemoryBufferRef buf;
     LLVMModuleRef mod;
@@ -555,7 +554,6 @@ static Scheme_Object* module_new(int argc, Scheme_Object **argv)
 {
     Scheme_Object *ret;
     Scheme_Object *byte_name;
-    Scheme_Object *tag;
     LLVMModuleRef mod;
 
     assert(SCHEME_CHAR_STRINGP(argv[0]));
