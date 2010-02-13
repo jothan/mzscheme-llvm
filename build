@@ -1,6 +1,6 @@
 #!/bin/sh
 
-EXTRA_FLAGS="-Wall -pedantic -std=gnu99"
+EXTRA_FLAGS="-Wall -pedantic -std=gnu99 -Wextra -Wno-unused-parameter"
 export CFLAGS="`llvm-config --cflags` $EXTRA_FLAGS"
 
 MZC_CPP=""
