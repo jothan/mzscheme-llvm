@@ -436,6 +436,44 @@ static Scheme_Object* value_dump(int argc, Scheme_Object **argv)
 }
 
 /*
+  Builder operations
+*/
+
+/*
+  LLVM builder destructor, invoked by mzscheme's garbage collector.
+*/
+static void builder_destroy(void *p, void *data)
+{
+    LLVMBuilderRef builder;
+    assert(cptr_check(p, "llvm-builder"));
+
+    builder = SCHEME_CPTR_VAL(p);
+    assert(builder);
+
+    //fprintf(stderr, "Destroying builder <%p> !\n", (void*)builder);
+    //fflush(stderr);
+
+    LLVMDisposeBuilder(builder);
+}
+
+/*
+  Create a new LLVM builder.
+*/
+static Scheme_Object* builder_new(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *ret;
+    LLVMBuilderRef builder;
+
+    builder = LLVMCreateBuilder();
+    assert(builder);
+
+    ret = cptr_make(builder, "llvm-builder");
+    scheme_add_finalizer(ret, builder_destroy, scheme_void);
+
+    return ret;
+}
+
+/*
   Function operations
 */
 
@@ -666,6 +704,8 @@ static const struct module_function functions[] = {
     {"llvm-const-sext-or-bitcast",  const_sext_or_bitcast,  2, 2},
     {"llvm-const-trunc-or-bitcast", const_trunc_or_bitcast, 2, 2},
     {"llvm-value-dump",       value_dump,       1, 1},
+    /* Builder operations */
+    {"llvm-builder-new", builder_new, 0, 0},
     /* Function operations */
     {"llvm-function-add!",    function_add,    3, 3},
     {"llvm-function-delete!", function_delete, 1, 1},
