@@ -143,6 +143,13 @@ static int list_length(const Scheme_Object *obj)
 */
 
 /*
+  Get a reference to the void type.
+*/
+static Scheme_Object* type_void(int argc, Scheme_Object **argv)
+{
+    return cptr_make(LLVMVoidType(), "llvm-type");
+}
+/*
   Get a reference to an integer type of an arbitrary size.
   argv[0]: int size in bits
 */
@@ -698,6 +705,7 @@ struct module_function {
 
 static const struct module_function functions[] = {
     /* Type operations */
+    {"llvm-type-void",      type_void,      0, 0},
     {"llvm-type-int",       type_int,       1, 1},
     {"llvm-type-int1",      type_int1,      0, 0},
     {"llvm-type-int8",      type_int8,      0, 0},
