@@ -481,6 +481,48 @@ static Scheme_Object* builder_new(int argc, Scheme_Object **argv)
 }
 
 /*
+  Position a builder to the end of a basic block
+  argv[0]: Builder
+  argv[1]: Basic block
+*/
+static Scheme_Object* builder_pos_at_end(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-builder"));
+    assert(cptr_check(argv[1], "llvm-bb"));
+    assert(SCHEME_CPTR_VAL(argv[1]));
+
+    LLVMPositionBuilderAtEnd(SCHEME_CPTR_VAL(argv[0]),
+			     SCHEME_CPTR_VAL(argv[1]));
+
+    return scheme_void;
+}
+
+/*
+  Clear the builder's position
+  argv[0]: Builder
+*/
+static Scheme_Object* builder_pos_clear(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-builder"));
+
+    LLVMClearInsertionPosition(SCHEME_CPTR_VAL(argv[0]));
+
+    return scheme_void;
+}
+
+/*
+  Build a void return
+*/
+static Scheme_Object* build_ret_void(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-builder"));
+
+    LLVMBuildRetVoid(SCHEME_CPTR_VAL(argv[0]));
+
+    return scheme_void;
+}
+
+/*
   Basic block operations
 */
 
@@ -764,7 +806,10 @@ static const struct module_function functions[] = {
     {"llvm-const-trunc-or-bitcast", const_trunc_or_bitcast, 2, 2},
     {"llvm-value-dump",       value_dump,       1, 1},
     /* Builder operations */
-    {"llvm-builder-new", builder_new, 0, 0},
+    {"llvm-builder-new",         builder_new,        0, 0},
+    {"llvm-builder-pos-at-end!", builder_pos_at_end, 2, 2},
+    {"llvm-builder-pos-clear!",  builder_pos_clear,  1, 1},
+    {"llvm-build-ret-void",      build_ret_void,     1, 1},
     /* Basic block operations */
     {"llvm-bb-function-entry", bb_function_entry, 1, 1},
     {"llvm-bb-append!",        bb_append,         2, 2},
