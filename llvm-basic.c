@@ -474,6 +474,44 @@ static Scheme_Object* builder_new(int argc, Scheme_Object **argv)
 }
 
 /*
+  Basic block operations
+*/
+
+static Scheme_Object* bb_function_entry(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[0]));
+
+    return cptr_make(LLVMGetEntryBasicBlock(SCHEME_CPTR_VAL(argv[0])), "llvm-bb");
+}
+
+static Scheme_Object* bb_append(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *func_name;
+    assert(cptr_check(argv[0], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[0]));
+    assert(SCHEME_CHAR_STRINGP(argv[1]));
+
+    func_name = scheme_char_string_to_byte_string(argv[1]);
+
+    return cptr_make(LLVMAppendBasicBlock(SCHEME_CPTR_VAL(argv[0]),
+					  SCHEME_BYTE_STR_VAL(func_name)), "llvm-bb");
+}
+
+static Scheme_Object* bb_delete(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-bb"));
+    assert(SCHEME_CPTR_VAL(argv[0]));
+
+    LLVMDeleteBasicBlock(SCHEME_CPTR_VAL(argv[0]));
+
+    SCHEME_CPTR_VAL(argv[0]) = NULL;
+
+    return scheme_void;
+}
+
+
+/*
   Function operations
 */
 
@@ -706,6 +744,10 @@ static const struct module_function functions[] = {
     {"llvm-value-dump",       value_dump,       1, 1},
     /* Builder operations */
     {"llvm-builder-new", builder_new, 0, 0},
+    /* Basic block operations */
+    {"llvm-bb-function-entry", bb_function_entry, 1, 1},
+    {"llvm-bb-append!",        bb_append,         2, 2},
+    {"llvm-bb-delete!",        bb_delete,         1, 1},
     /* Function operations */
     {"llvm-function-add!",    function_add,    3, 3},
     {"llvm-function-delete!", function_delete, 1, 1},
