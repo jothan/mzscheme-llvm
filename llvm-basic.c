@@ -477,6 +477,10 @@ static Scheme_Object* builder_new(int argc, Scheme_Object **argv)
   Basic block operations
 */
 
+/*
+  Get the entry basic block of a function.
+  argv[0]: Function
+*/
 static Scheme_Object* bb_function_entry(int argc, Scheme_Object **argv)
 {
     assert(cptr_check(argv[0], "llvm-value"));
@@ -485,6 +489,11 @@ static Scheme_Object* bb_function_entry(int argc, Scheme_Object **argv)
     return cptr_make(LLVMGetEntryBasicBlock(SCHEME_CPTR_VAL(argv[0])), "llvm-bb");
 }
 
+/*
+  Append a basic block to a function.
+  argv[0]: Function
+  argv[1]: Basic block name
+*/
 static Scheme_Object* bb_append(int argc, Scheme_Object **argv)
 {
     Scheme_Object *func_name;
@@ -498,6 +507,10 @@ static Scheme_Object* bb_append(int argc, Scheme_Object **argv)
 					  SCHEME_BYTE_STR_VAL(func_name)), "llvm-bb");
 }
 
+/*
+  Delete a basic block.
+  argv[0]: Basic block
+*/
 static Scheme_Object* bb_delete(int argc, Scheme_Object **argv)
 {
     assert(cptr_check(argv[0], "llvm-bb"));
