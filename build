@@ -10,4 +10,4 @@ done
 
 mzc --3m --vv --xform $MZC_CPP llvm-basic.c && \
 mzc --3m --vv --cc llvm-basic.3m.c && \
-mzc --3m --ld llvm-basic.so llvm-basic_3m.o -- `llvm-config --ldflags` -lstdc++ `llvm-config --libfiles engine backend bitreader bitwriter`
+mzc --3m --vv --ld llvm-basic.so llvm-basic_3m.o `llvm-config --ldflags` -lstdc++ `llvm-config --libfiles engine backend bitreader bitwriter`
