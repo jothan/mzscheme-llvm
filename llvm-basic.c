@@ -511,6 +511,35 @@ static Scheme_Object* builder_pos_clear(int argc, Scheme_Object **argv)
 }
 
 /*
+  Insert a value with a builder
+  argv[0]: Builder
+  argv[1]: Value
+  argv[2]: Value name (optional)
+*/
+static Scheme_Object* builder_insert(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *val_name;
+
+    assert(cptr_check(argv[0], "llvm-builder"));
+    assert(cptr_check(argv[1], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[1]));
+
+    if(argc == 2) {
+	LLVMInsertIntoBuilder(SCHEME_CPTR_VAL(argv[0]),
+			      SCHEME_CPTR_VAL(argv[1]));
+    } else if(argc == 3) {
+	assert(SCHEME_CHAR_STRINGP(argv[2]));
+	val_name = scheme_char_string_to_byte_string(argv[2]);
+
+	LLVMInsertIntoBuilderWithName(SCHEME_CPTR_VAL(argv[0]),
+				      SCHEME_CPTR_VAL(argv[1]),
+				      SCHEME_BYTE_STR_VAL(val_name));
+    }
+
+    return scheme_void;
+}
+
+/*
   Build a void return
 */
 static Scheme_Object* build_ret_void(int argc, Scheme_Object **argv)
@@ -518,6 +547,21 @@ static Scheme_Object* build_ret_void(int argc, Scheme_Object **argv)
     assert(cptr_check(argv[0], "llvm-builder"));
 
     LLVMBuildRetVoid(SCHEME_CPTR_VAL(argv[0]));
+
+    return scheme_void;
+}
+
+/*
+  Build a return instruction
+*/
+static Scheme_Object* build_ret(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-builder"));
+    assert(cptr_check(argv[1], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[1]));
+
+    LLVMBuildRet(SCHEME_CPTR_VAL(argv[0]),
+		 SCHEME_CPTR_VAL(argv[1]));
 
     return scheme_void;
 }
@@ -809,7 +853,9 @@ static const struct module_function functions[] = {
     {"llvm-builder-new",         builder_new,        0, 0},
     {"llvm-builder-pos-at-end!", builder_pos_at_end, 2, 2},
     {"llvm-builder-pos-clear!",  builder_pos_clear,  1, 1},
+    {"llvm-builder-insert!",     builder_insert,     2, 3},
     {"llvm-build-ret-void",      build_ret_void,     1, 1},
+    {"llvm-build-ret",           build_ret,          2, 2},
     /* Basic block operations */
     {"llvm-bb-function-entry", bb_function_entry, 1, 1},
     {"llvm-bb-append!",        bb_append,         2, 2},
