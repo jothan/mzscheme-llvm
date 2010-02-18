@@ -948,12 +948,12 @@ static const struct module_function functions[] = {
     {"llvm-function-add!",    function_add,    3, 3},
     {"llvm-function-delete!", function_delete, 1, 1},
     // Global variable operations
-    {"llvm-global-add!",    global_add,    2, 3},
-    {"llvm-global-delete!", global_delete, 1, 1},
-    {"llvm-global-set-init!", global_set_init, 2, 2},
-    {"llvm-global-get-init", global_get_init, 1, 1},
+    {"llvm-global-add!",          global_add,          2, 3},
+    {"llvm-global-delete!",       global_delete,       1, 1},
+    {"llvm-global-set-init!",     global_set_init,     2, 2},
+    {"llvm-global-get-init",      global_get_init,     1, 1},
     {"llvm-global-set-constant!", global_set_constant, 2, 2},
-    {"llvm-global-constant?", global_is_constant, 1, 1},
+    {"llvm-global-constant?",     global_is_constant,  1, 1},
     // Module operations
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
