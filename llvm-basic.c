@@ -86,6 +86,11 @@ static inline bool cptr_check(const Scheme_Object *cptr, const char *tag1)
     }
 }
 
+static inline bool value_check(const Scheme_Object *cptr)
+{
+    return cptr_check(cptr, "llvm-value") && SCHEME_CPTR_VAL(cptr) != NULL;
+}
+
 
 /*
   Mutation-agnostic pair accessors.
@@ -361,10 +366,8 @@ static Scheme_Object* const_real(int argc, Scheme_Object **argv)
 #define VALUE_BIN_OP(NAME, FUNCTION) \
 static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
 { \
-    assert(cptr_check(argv[0], "llvm-value")); \
-    assert(SCHEME_CPTR_VAL(argv[0])); \
-    assert(cptr_check(argv[1], "llvm-value")); \
-    assert(SCHEME_CPTR_VAL(argv[1])); \
+    assert(value_check(argv[0]));     \
+    assert(value_check(argv[1])); \
 \
     return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
 			      SCHEME_CPTR_VAL(argv[1])), "llvm-value"); \
@@ -401,8 +404,7 @@ VALUE_BIN_OP(const_ashr, LLVMConstAShr)
 #define VALUE_CONV_BIN_OP(NAME, FUNCTION) \
 static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
 { \
-    assert(cptr_check(argv[0], "llvm-value")); \
-    assert(SCHEME_CPTR_VAL(argv[0])); \
+    assert(value_check(argv[0])); \
     assert(cptr_check(argv[1], "llvm-type")); \
 \
     return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
@@ -434,8 +436,7 @@ VALUE_CONV_BIN_OP(const_fpcast, LLVMConstFPCast)
 */
 static Scheme_Object* value_dump(int argc, Scheme_Object **argv)
 {
-    assert(cptr_check(argv[0], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[0]));
+    assert(value_check(argv[0]));
 
     LLVMDumpValue(SCHEME_CPTR_VAL(argv[0]));
 
@@ -518,8 +519,7 @@ static Scheme_Object* builder_insert(int argc, Scheme_Object **argv)
     Scheme_Object *val_name;
 
     assert(cptr_check(argv[0], "llvm-builder"));
-    assert(cptr_check(argv[1], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[1]));
+    assert(value_check(argv[1]));
 
     if(argc == 2) {
 	LLVMInsertIntoBuilder(SCHEME_CPTR_VAL(argv[0]),
@@ -554,8 +554,7 @@ static Scheme_Object* build_ret_void(int argc, Scheme_Object **argv)
 static Scheme_Object* build_ret(int argc, Scheme_Object **argv)
 {
     assert(cptr_check(argv[0], "llvm-builder"));
-    assert(cptr_check(argv[1], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[1]));
+    assert(value_check(argv[1]));
 
     LLVMBuildRet(SCHEME_CPTR_VAL(argv[0]),
 		 SCHEME_CPTR_VAL(argv[1]));
@@ -573,8 +572,7 @@ static Scheme_Object* build_ret(int argc, Scheme_Object **argv)
 */
 static Scheme_Object* bb_function_entry(int argc, Scheme_Object **argv)
 {
-    assert(cptr_check(argv[0], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[0]));
+    assert(value_check(argv[0]));
 
     return cptr_make(LLVMGetEntryBasicBlock(SCHEME_CPTR_VAL(argv[0])), "llvm-bb");
 }
@@ -587,8 +585,7 @@ static Scheme_Object* bb_function_entry(int argc, Scheme_Object **argv)
 static Scheme_Object* bb_append(int argc, Scheme_Object **argv)
 {
     Scheme_Object *func_name;
-    assert(cptr_check(argv[0], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[0]));
+    assert(value_check(argv[0]));
     assert(SCHEME_CHAR_STRINGP(argv[1]));
 
     func_name = scheme_char_string_to_byte_string(argv[1]);
@@ -644,8 +641,7 @@ static Scheme_Object* function_add(int argc, Scheme_Object **argv)
 */
 static Scheme_Object* function_delete(int argc, Scheme_Object **argv)
 {
-    assert(cptr_check(argv[0], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[0]));
+    assert(value_check(argv[0]));
 
     LLVMDeleteFunction(SCHEME_CPTR_VAL(argv[0]));
 
@@ -690,8 +686,7 @@ static Scheme_Object* global_add(int argc, Scheme_Object **argv)
 */
 static Scheme_Object* global_delete(int argc, Scheme_Object **argv)
 {
-    assert(cptr_check(argv[0], "llvm-value"));
-    assert(SCHEME_CPTR_VAL(argv[0]));
+    assert(value_check(argv[0]));
 
     LLVMDeleteGlobal(SCHEME_CPTR_VAL(argv[0]));
 
