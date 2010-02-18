@@ -696,6 +696,21 @@ static Scheme_Object* global_delete(int argc, Scheme_Object **argv)
     return scheme_void;
 }
 
+/*
+  Set a global variable's initializer
+  argv[0]: Global value
+  argv[1]: Constant initializer value
+*/
+static Scheme_Object* global_set_init(int argc, Scheme_Object **argv)
+{
+    assert(value_check(argv[0]));
+    assert(value_check(argv[1]));
+
+    LLVMSetInitializer(SCHEME_CPTR_VAL(argv[0]), SCHEME_CPTR_VAL(argv[1]));
+
+    return scheme_void;
+}
+
 
 /*
   Module operations
@@ -901,6 +916,7 @@ static const struct module_function functions[] = {
     // Global variable operations
     {"llvm-global-add!",    global_add,    2, 3},
     {"llvm-global-delete!", global_delete, 1, 1},
+    {"llvm-global-set-init!", global_set_init, 2, 2},
     // Module operations
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
