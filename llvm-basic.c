@@ -269,7 +269,6 @@ static Scheme_Object* type_function(int argc, Scheme_Object **argv)
     }
     assert(cptr_check(argv[0], "llvm-type"));
     assert(SCHEME_NULLP(argv[1]) || PAIRP(argv[1]));
-    assert(SCHEME_BOOLP(vararg));
 
     list_len = list_length(argv[1]);
     assert(list_len >= 0);
@@ -333,7 +332,6 @@ static Scheme_Object* const_int(int argc, Scheme_Object **argv)
     assert(SCHEME_INTP(argv[1]));
 
     if(argc == 3) {
-	assert(SCHEME_BOOLP(argv[2]));
 	sext = argv[2];
     }
 
