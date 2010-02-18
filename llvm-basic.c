@@ -457,9 +457,6 @@ static void builder_destroy(void *p, void *data)
     builder = SCHEME_CPTR_VAL(p);
     assert(builder);
 
-    //fprintf(stderr, "Destroying builder <%p> !\n", (void*)builder);
-    //fflush(stderr);
-
     LLVMDisposeBuilder(builder);
 }
 
@@ -673,9 +670,6 @@ static void module_destroy(void *p, void *data)
     mod = SCHEME_CPTR_VAL(p);
     assert(mod);
 
-    fprintf(stderr, "Destroying module <%p> !\n", (void*)mod);
-    fflush(stderr);
-
     LLVMDisposeModule(mod);
 }
 
@@ -720,7 +714,6 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
 	scheme_signal_error("Could not parse LLVM module \"%Q\": %Q.\n", argv[0], scm_error);
     }
     assert(mod);
-    fprintf(stderr, "New module <%p> !\n", (void*)mod);
 
     ret = cptr_make(mod, "llvm-module");
     scheme_add_finalizer(ret, module_destroy, scheme_void);
