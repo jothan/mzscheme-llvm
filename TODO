@@ -1,0 +1,12 @@
+* Check if the name specified in bb_append can be made optional.
+   For now, the interface is too incomplete to add branches and other
+   crucial flow instructions to test this.
+* Figure out the life cycle of values refered by LLVMValueRefs.
+   The llvm-c interface does not seem to have any way of tracking
+   references made to LLVM values. In the C++ classes, there seems to
+   be some magic happening with addUse(). The main question is: are we
+   leaking memory ?
+* Consult the mzscheme security guard when loading modules.
+   I do not know enough to feed the path correctly to the security
+   guard. This is a potential security hole for those needing a
+   "sandboxed" environment.
