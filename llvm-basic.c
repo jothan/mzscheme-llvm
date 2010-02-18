@@ -656,6 +656,53 @@ static Scheme_Object* function_delete(int argc, Scheme_Object **argv)
 }
 
 /*
+  Global variable operations
+*/
+
+/*
+  Add a global to a module
+  argv[0]: Module
+  argv[1]: Global type
+  argv[2]: Global name
+*/
+static Scheme_Object* global_add(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *global_name;
+    const char *name = "";
+
+    assert(cptr_check(argv[0], "llvm-module"));
+    assert(cptr_check(argv[1], "llvm-type"));
+
+    if(argc == 3) {
+	assert(SCHEME_CHAR_STRINGP(argv[2]));
+	global_name = scheme_char_string_to_byte_string(argv[2]);
+	name = SCHEME_BYTE_STR_VAL(global_name);
+    }
+
+    return cptr_make(LLVMAddGlobal(SCHEME_CPTR_VAL(argv[0]),
+				   SCHEME_CPTR_VAL(argv[1]),
+				   name), "llvm-value");
+}
+
+/*
+  Delete a global variable from a module
+  argv[0]: Global value
+*/
+static Scheme_Object* global_delete(int argc, Scheme_Object **argv)
+{
+    assert(cptr_check(argv[0], "llvm-value"));
+    assert(SCHEME_CPTR_VAL(argv[0]));
+
+    LLVMDeleteGlobal(SCHEME_CPTR_VAL(argv[0]));
+
+    // This operation invalidates the pointer.
+    SCHEME_CPTR_VAL(argv[0]) = NULL;
+
+    return scheme_void;
+}
+
+
+/*
   Module operations
 */
 
@@ -856,6 +903,9 @@ static const struct module_function functions[] = {
     // Function operations
     {"llvm-function-add!",    function_add,    3, 3},
     {"llvm-function-delete!", function_delete, 1, 1},
+    // Global variable operations
+    {"llvm-global-add!",    global_add,    2, 3},
+    {"llvm-global-delete!", global_delete, 1, 1},
     // Module operations
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
