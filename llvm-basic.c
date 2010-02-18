@@ -649,7 +649,7 @@ static Scheme_Object* function_delete(int argc, Scheme_Object **argv)
 
     LLVMDeleteFunction(SCHEME_CPTR_VAL(argv[0]));
 
-    /* This operation invalidates the pointer. */
+    // This operation invalidates the pointer.
     SCHEME_CPTR_VAL(argv[0]) = NULL;
 
     return scheme_void;
@@ -703,7 +703,7 @@ static Scheme_Object* module_load(int argc, Scheme_Object **argv)
     fail = LLVMParseBitcode(buf, &mod, &error);
     LLVMDisposeMemoryBuffer(buf);
     if(fail) {
-	/* Error message is optional */
+	// Error message is optional
 	if(error) {
 	    scm_error = scheme_make_utf8_string(error);
 	    LLVMDisposeMessage(error);
@@ -783,7 +783,7 @@ struct module_function {
 };
 
 static const struct module_function functions[] = {
-    /* Type operations */
+    // Type operations
     {"llvm-type-void",      type_void,      0, 0},
     {"llvm-type-int",       type_int,       1, 1},
     {"llvm-type-int1",      type_int1,      0, 0},
@@ -799,12 +799,12 @@ static const struct module_function functions[] = {
     {"llvm-type-ppcfp128",  type_ppcfp128,  0, 0},
     {"llvm-type-pointer",   type_pointer,   1, 1},
     {"llvm-type-function",  type_function,  2, 3},
-    /* Value operations */
-    {"llvm-const-null",        const_null,        1, 1}, /* Constant scalar values */
+    // Value operations
+    {"llvm-const-null",        const_null,        1, 1}, // Constant scalar values
     {"llvm-const-allones",     const_allones,     1, 1},
     {"llvm-const-int",         const_int,         2, 3},
     {"llvm-const-real",        const_real,        2, 2},
-    {"llvm-const-add",         const_add,         2, 2}, /* Constant binary operations */
+    {"llvm-const-add",         const_add,         2, 2}, // Constant binary operations
     {"llvm-const-nsw-add",     const_nsw_add,     2, 2},
     {"llvm-const-fadd",        const_fadd,        2, 2},
     {"llvm-const-sub",         const_sub,         2, 2},
@@ -824,7 +824,7 @@ static const struct module_function functions[] = {
     {"llvm-const-shl",         const_shl,         2, 2},
     {"llvm-const-lshr",        const_lshr,        2, 2},
     {"llvm-const-ashr",        const_ashr,        2, 2},
-    {"llvm-const-trunc",       const_trunc,       2, 2}, /* Constant conversion operations */
+    {"llvm-const-trunc",       const_trunc,       2, 2}, // Constant conversion operations
     {"llvm-const-sext",        const_sext,        2, 2},
     {"llvm-const-zext",        const_zext,        2, 2},
     {"llvm-const-fptrunc",     const_fptrunc,     2, 2},
@@ -842,21 +842,21 @@ static const struct module_function functions[] = {
     {"llvm-const-sext-or-bitcast",  const_sext_or_bitcast,  2, 2},
     {"llvm-const-trunc-or-bitcast", const_trunc_or_bitcast, 2, 2},
     {"llvm-value-dump",       value_dump,       1, 1},
-    /* Builder operations */
+    // Builder operations
     {"llvm-builder-new",         builder_new,        0, 0},
     {"llvm-builder-pos-at-end!", builder_pos_at_end, 2, 2},
     {"llvm-builder-pos-clear!",  builder_pos_clear,  1, 1},
     {"llvm-builder-insert!",     builder_insert,     2, 3},
     {"llvm-build-ret-void",      build_ret_void,     1, 1},
     {"llvm-build-ret",           build_ret,          2, 2},
-    /* Basic block operations */
+    // Basic block operations
     {"llvm-bb-function-entry", bb_function_entry, 1, 1},
     {"llvm-bb-append!",        bb_append,         2, 2},
     {"llvm-bb-delete!",        bb_delete,         1, 1},
-    /* Function operations */
+    // Function operations
     {"llvm-function-add!",    function_add,    3, 3},
     {"llvm-function-delete!", function_delete, 1, 1},
-    /* Module operations */
+    // Module operations
     {"llvm-module-load", module_load, 1, 1},
     {"llvm-module-new",  module_new,  1, 1},
     {"llvm-module-dump", module_dump, 1, 1},
