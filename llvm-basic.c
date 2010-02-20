@@ -354,6 +354,28 @@ static Scheme_Object* const_real(int argc, Scheme_Object **argv)
 				   SCHEME_DBL_VAL(argv[1])), "llvm-value");
 }
 
+/*
+  Build an constant string.
+  argv[0]: String to represent
+  argv[1]: Boolean to indicate if the string will be null terminated (optional)
+*/
+static Scheme_Object* const_string(int argc, Scheme_Object **argv)
+{
+    Scheme_Object *string;
+    bool null_term = true;
+    assert(SCHEME_CHAR_STRINGP(argv[0]));
+
+    if(argc == 2) {
+	null_term = SCHEME_TRUEP(argv[1]);
+    }
+
+    string = scheme_char_string_to_byte_string(argv[0]);
+
+    return cptr_make(LLVMConstString(SCHEME_BYTE_STR_VAL(string),
+				     SCHEME_BYTE_STRLEN_VAL(string),
+				     !null_term), "llvm-value");
+}
+
 /* Constant binary operations */
 
 /*
@@ -1001,6 +1023,7 @@ static const struct module_function functions[] = {
     {"llvm-const-allones",     const_allones,     1, 1},
     {"llvm-const-int",         const_int,         2, 3},
     {"llvm-const-real",        const_real,        2, 2},
+    {"llvm-const-string",      const_string,      1, 2}, // Composite constants
     {"llvm-const-add",         const_add,         2, 2}, // Constant binary operations
     {"llvm-const-nsw-add",     const_nsw_add,     2, 2},
     {"llvm-const-fadd",        const_fadd,        2, 2},
