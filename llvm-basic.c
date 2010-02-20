@@ -825,13 +825,18 @@ static Scheme_Object* global_get_init(int argc, Scheme_Object **argv)
 /*
   Set the constant flag on a global value
   argv[0]: Global value
-  argv[1]: Boolean determining if this is a constant
+  argv[1]: Boolean determining if this is a constant (optional)
 */
 static Scheme_Object* global_set_constant(int argc, Scheme_Object **argv)
 {
+    bool cst = true;
     assert(value_check(argv[0]));
 
-    LLVMSetGlobalConstant(SCHEME_CPTR_VAL(argv[0]), SCHEME_TRUEP(argv[1]));
+    if(argc == 2) {
+	cst = SCHEME_TRUEP(argv[1]);
+    }
+
+    LLVMSetGlobalConstant(SCHEME_CPTR_VAL(argv[0]), cst);
 
     return scheme_void;
 }
@@ -1090,7 +1095,7 @@ static const struct module_function functions[] = {
     {"llvm-global-delete!",       global_delete,       1, 1},
     {"llvm-global-set-init!",     global_set_init,     2, 2},
     {"llvm-global-get-init",      global_get_init,     1, 1},
-    {"llvm-global-set-constant!", global_set_constant, 2, 2},
+    {"llvm-global-set-constant!", global_set_constant, 1, 2},
     {"llvm-global-constant?",     global_is_constant,  1, 1},
     // Module operations
     {"llvm-module-load", module_load, 1, 1},
