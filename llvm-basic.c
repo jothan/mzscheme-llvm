@@ -961,7 +961,7 @@ static const struct module_function functions[] = {
     {"llvm-const-urem",        const_urem,        2, 2},
     {"llvm-const-srem",        const_srem,        2, 2},
     {"llvm-const-frem",        const_frem,        2, 2},
-    {"llvm-const-add",         const_and,         2, 2},
+    {"llvm-const-and",         const_and,         2, 2},
     {"llvm-const-or",          const_or,          2, 2},
     {"llvm-const-xor",         const_xor,         2, 2},
     {"llvm-const-shl",         const_shl,         2, 2},
