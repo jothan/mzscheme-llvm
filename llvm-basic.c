@@ -560,6 +560,58 @@ static Scheme_Object* build_ret(int argc, Scheme_Object **argv)
     return scheme_void;
 }
 
+// Builder binary instructions
+
+/*
+  Build a two-operand instruction
+  argv[0]: Builder to use
+  argv[1]: Operand 1
+  argv[2]: Operand 2
+  argv[3]: Name of the instruction (optional)
+*/
+#define BUILDER_BIN_OP(NAME, FUNCTION) \
+static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
+{ \
+    Scheme_Object *sname; \
+    const char *name = ""; \
+ \
+    assert(cptr_check(argv[0], "llvm-builder")); \
+    assert(value_check(argv[1])); \
+    assert(value_check(argv[2])); \
+ \
+    if(argc == 4) { \
+	assert(SCHEME_CHAR_STRINGP(argv[3])); \
+	sname = scheme_char_string_to_byte_string(argv[3]); \
+	name = SCHEME_BYTE_STR_VAL(sname); \
+    } \
+ \
+    return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
+			      SCHEME_CPTR_VAL(argv[1]), \
+			      SCHEME_CPTR_VAL(argv[2]), \
+			      name), "llvm-value"); \
+}
+
+BUILDER_BIN_OP(build_add, LLVMBuildAdd)
+BUILDER_BIN_OP(build_nsw_add, LLVMBuildNSWAdd)
+BUILDER_BIN_OP(build_fadd, LLVMBuildFAdd)
+BUILDER_BIN_OP(build_sub, LLVMBuildSub)
+BUILDER_BIN_OP(build_fsub, LLVMBuildFSub)
+BUILDER_BIN_OP(build_mul, LLVMBuildMul)
+BUILDER_BIN_OP(build_fmul, LLVMBuildFMul)
+BUILDER_BIN_OP(build_udiv, LLVMBuildUDiv)
+BUILDER_BIN_OP(build_sdiv, LLVMBuildSDiv)
+BUILDER_BIN_OP(build_exact_sdiv, LLVMBuildExactSDiv)
+BUILDER_BIN_OP(build_fdiv, LLVMBuildFDiv)
+BUILDER_BIN_OP(build_urem, LLVMBuildURem)
+BUILDER_BIN_OP(build_srem, LLVMBuildSRem)
+BUILDER_BIN_OP(build_frem, LLVMBuildFRem)
+BUILDER_BIN_OP(build_and, LLVMBuildAnd)
+BUILDER_BIN_OP(build_or, LLVMBuildOr)
+BUILDER_BIN_OP(build_xor, LLVMBuildXor)
+BUILDER_BIN_OP(build_shl, LLVMBuildShl)
+BUILDER_BIN_OP(build_lshr, LLVMBuildLShr)
+BUILDER_BIN_OP(build_ashr, LLVMBuildAShr)
+
 /*
   Basic block operations
 */
@@ -940,6 +992,26 @@ static const struct module_function functions[] = {
     {"llvm-builder-insert!",     builder_insert,     2, 3},
     {"llvm-build-ret-void",      build_ret_void,     1, 1},
     {"llvm-build-ret",           build_ret,          2, 2},
+    {"llvm-build-add",           build_add,          3, 4}, // Builder binary instructions
+    {"llvm-build-nsw-add",       build_nsw_add,      3, 4},
+    {"llvm-build-fadd",          build_fadd,         3, 4},
+    {"llvm-build-sub",           build_sub,          3, 4},
+    {"llvm-build-fsub",          build_fsub,         3, 4},
+    {"llvm-build-mul",           build_mul,          3, 4},
+    {"llvm-build-fmul",          build_fmul,         3, 4},
+    {"llvm-build-udiv",          build_udiv,         3, 4},
+    {"llvm-build-sdiv",          build_sdiv,         3, 4},
+    {"llvm-build-exact-sdiv",    build_exact_sdiv,   3, 4},
+    {"llvm-build-fdiv",          build_fdiv,         3, 4},
+    {"llvm-build-urem",          build_urem,         3, 4},
+    {"llvm-build-srem",          build_srem,         3, 4},
+    {"llvm-build-frem",          build_frem,         3, 4},
+    {"llvm-build-and",           build_and,          3, 4},
+    {"llvm-build-or",            build_or,           3, 4},
+    {"llvm-build-xor",           build_xor,          3, 4},
+    {"llvm-build-shl",           build_shl,          3, 4},
+    {"llvm-build-lshr",          build_lshr,         3, 4},
+    {"llvm-build-ashr",          build_ashr,         3, 4},
     // Basic block operations
     {"llvm-bb-function-entry", bb_function_entry, 1, 1},
     {"llvm-bb-append!",        bb_append,         2, 2},
