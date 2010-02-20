@@ -612,6 +612,55 @@ BUILDER_BIN_OP(build_shl, LLVMBuildShl)
 BUILDER_BIN_OP(build_lshr, LLVMBuildLShr)
 BUILDER_BIN_OP(build_ashr, LLVMBuildAShr)
 
+// Builder conversion operations
+
+/*
+  Build a conversion instruction
+  argv[0]: Builder to use
+  argv[1]: Source value
+  argv[2]: Destination type
+  argv[3]: Name of the instruction (optional)
+*/
+#define BUILDER_CONV_BIN_OP(NAME, FUNCTION) \
+static Scheme_Object* NAME(int argc, Scheme_Object **argv) \
+{ \
+    Scheme_Object *sname; \
+    const char *name = ""; \
+ \
+    assert(cptr_check(argv[0], "llvm-builder")); \
+    assert(value_check(argv[1])); \
+    assert(cptr_check(argv[2], "llvm-type"));	\
+ \
+    if(argc == 4) { \
+	assert(SCHEME_CHAR_STRINGP(argv[3])); \
+	sname = scheme_char_string_to_byte_string(argv[3]); \
+	name = SCHEME_BYTE_STR_VAL(sname); \
+    } \
+ \
+    return cptr_make(FUNCTION(SCHEME_CPTR_VAL(argv[0]), \
+			      SCHEME_CPTR_VAL(argv[1]), \
+			      SCHEME_CPTR_VAL(argv[2]), \
+			      name), "llvm-value"); \
+}
+
+BUILDER_CONV_BIN_OP(build_trunc, LLVMBuildTrunc)
+BUILDER_CONV_BIN_OP(build_sext, LLVMBuildSExt)
+BUILDER_CONV_BIN_OP(build_zext, LLVMBuildZExt)
+BUILDER_CONV_BIN_OP(build_fptrunc, LLVMBuildFPTrunc)
+BUILDER_CONV_BIN_OP(build_fpext, LLVMBuildFPExt)
+BUILDER_CONV_BIN_OP(build_uitofp, LLVMBuildUIToFP)
+BUILDER_CONV_BIN_OP(build_sitofp, LLVMBuildSIToFP)
+BUILDER_CONV_BIN_OP(build_fptoui, LLVMBuildFPToUI)
+BUILDER_CONV_BIN_OP(build_fptosi, LLVMBuildFPToSI)
+BUILDER_CONV_BIN_OP(build_ptrtoint, LLVMBuildPtrToInt)
+BUILDER_CONV_BIN_OP(build_inttoptr, LLVMBuildIntToPtr)
+BUILDER_CONV_BIN_OP(build_bitcast, LLVMBuildBitCast)
+BUILDER_CONV_BIN_OP(build_zext_or_bitcast, LLVMBuildZExtOrBitCast)
+BUILDER_CONV_BIN_OP(build_sext_or_bitcast, LLVMBuildSExtOrBitCast)
+BUILDER_CONV_BIN_OP(build_trunc_or_bitcast, LLVMBuildTruncOrBitCast)
+BUILDER_CONV_BIN_OP(build_pointercast, LLVMBuildPointerCast)
+BUILDER_CONV_BIN_OP(build_fpcast, LLVMBuildFPCast)
+
 /*
   Basic block operations
 */
@@ -1012,6 +1061,23 @@ static const struct module_function functions[] = {
     {"llvm-build-shl",           build_shl,          3, 4},
     {"llvm-build-lshr",          build_lshr,         3, 4},
     {"llvm-build-ashr",          build_ashr,         3, 4},
+    {"llvm-build-trunc",         build_trunc,        3, 4}, // Builder conversion operations
+    {"llvm-build-sext",          build_sext,         3, 4},
+    {"llvm-build-zext",          build_zext,         3, 4},
+    {"llvm-build-fptrunc",       build_fptrunc,      3, 4},
+    {"llvm-build-fpext",         build_fpext,        3, 4},
+    {"llvm-build-uitofp",        build_uitofp,       3, 4},
+    {"llvm-build-sitofp",        build_sitofp,       3, 4},
+    {"llvm-build-fptoui",        build_fptoui,       3, 4},
+    {"llvm-build-fptosi",        build_fptosi,       3, 4},
+    {"llvm-build-ptrtoint",      build_ptrtoint,     3, 4},
+    {"llvm-build-inttoptr",      build_inttoptr,     3, 4},
+    {"llvm-build-bitcast",       build_bitcast,      3, 4},
+    {"llvm-build-pointercast",   build_pointercast,  3, 4},
+    {"llvm-build-fpcast",        build_fpcast,       3, 4},
+    {"llvm-build-zext-or-bitcast",  build_zext_or_bitcast,  3, 4},
+    {"llvm-build-sext-or-bitcast",  build_sext_or_bitcast,  3, 4},
+    {"llvm-build-trunc-or-bitcast", build_trunc_or_bitcast, 3, 4},
     // Basic block operations
     {"llvm-bb-function-entry", bb_function_entry, 1, 1},
     {"llvm-bb-append!",        bb_append,         2, 2},
